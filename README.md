@@ -55,3 +55,14 @@ Run scripts in the following order:
 5. `subnetwork_analysis.py` — subnetwork metrics
 6. R statistical testing
 7. R ERGM modelling
+
+## Methodological Notes
+- AI classification uses a three-signal composite approach:
+  - Frequency-based features
+  - Temporal burst detection
+  - Linguistic patterning
+- Network construction models memetic mutation as edge formation, using edit distance thresholds.
+- Statistical analysis includes both parametric and non-parametric tests, alongside permutation-based inference.
+
+## Disclaimer
+This respository is provided for research transparency and reproducibility. No claims are made regarding dataset ownership or redistribution rights.

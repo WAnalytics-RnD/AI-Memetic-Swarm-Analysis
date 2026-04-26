@@ -25,8 +25,8 @@ statistical and network modelling.
 
 ### R
 | Script | Purpose |
-| Statistical testing | Wilcoxon, Welch t-test, permutation test, effect sizes |
-| ERGM modelling | Exponential Random Graph Model estimation |
+| 'statistical_tests.R' | Wilcoxon, Welch t-test, permutation test, effect sizes |
+| 'ergm_model.R' | Exponential Random Graph Model estimation |
 
 ## Requirements
 
@@ -53,8 +53,8 @@ Run scripts in the following order:
 3. `mutation_analysis.py` — mutation network edges
 4. `network_analysis.py` — network construction
 5. `subnetwork_analysis.py` — subnetwork metrics
-6. R statistical testing
-7. R ERGM modelling
+6. 'statistical_tests.R' - Wilcoxon, Welch t-test, permutation test, Cohen's d, effect sizes
+7. 'ergm_model.R' - ERGM network model estimation on 500-node sample
 
 ## Methodological Notes
 - AI classification uses a three-signal composite approach:

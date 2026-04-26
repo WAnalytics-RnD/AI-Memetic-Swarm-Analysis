@@ -1,0 +1,68 @@
+import pandas as pd
+from transformers import pipeline
+import time
+
+df = pd.read_csv(r"C:\Users\Admin\Downloads\tweets_with_ai.csv")
+
+print("Loading model... (first run downloads ~500MB)")
+
+detector = pipeline(
+    "text-classification",
+    model="Hello-SimpleAI/chatgpt-detector-roberta",
+    truncation=True,
+    max_length=512
+)
+
+print(f"Loaded {len(df)} tweets. Starting classification...")
+print("This will take 2-4 hours. Leave it running overnight.")
+
+results = []
+for i, row in df.iterrows():
+    try:
+        out = detector(str(row["text"])[:512])[0]
+        label = out["label"]
+        score = out["score"]
+        model_ai = 1 if "generated" in label.lower() or label == "LABEL_1" else 0
+    except:
+        label = "UNKNOWN"
+        score = 0.0
+        model_ai = 0
+
+    results.append({
+        "model_label": label,
+        "model_score": score,
+        "model_ai": model_ai
+    })
+
+    if i % 500 == 0:
+        print(f"Progress: {i}/{len(df)} tweets processed")
+
+results_df = pd.DataFrame(results)
+df["model_label"] = results_df["model_label"].values
+df["model_score"] = results_df["model_score"].values
+df["model_ai"] = results_df["model_ai"].values
+
+# Composite classification:
+# High confidence AI = flagged by BOTH model AND frequency proxy
+# Medium confidence = flagged by either one
+# Human = flagged by neither
+
+def composite(row):
+    if row["model_ai"] == 1 and row["ai_generated"] == 1:
+        return 2  # High confidence AI
+    elif row["model_ai"] == 1 or row["ai_generated"] == 1:
+        return 1  # Medium confidence AI
+    else:
+        return 0  # Human
+
+df["composite_ai"] = df.apply(composite, axis=1)
+
+df.to_csv(r"C:\Users\Admin\Downloads\tweets_v2.csv", index=False)
+
+print("\n=== Classification Complete ===")
+print(f"High confidence AI (both signals): {(df['composite_ai'] == 2).sum()}")
+print(f"Medium confidence AI (one signal): {(df['composite_ai'] == 1).sum()}")
+print(f"Human (no signal):                 {(df['composite_ai'] == 0).sum()}")
+print(f"Model AI detections:               {df['model_ai'].sum()}")
+print(f"Frequency AI detections:           {df['ai_generated'].sum()}")
+print("\nSaved to tweets_v2.csv")
